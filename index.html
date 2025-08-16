@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бінго Завдання</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .bingo-cell {
+            aspect-ratio: 1;
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            min-height: 80px;
+        }
+        
+        .bingo-cell:hover {
+            opacity: 0.8;
+            transform: scale(0.95);
+        }
+        
+        .bingo-cell.completed {
+            background: var(--tg-theme-hint-color, #999999);
+            opacity: 0.6;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--tg-theme-bg-color, #ffffff);
+            padding: 20px;
+            border-radius: 16px;
+            max-width: 90%;
+            width: 320px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .modal-description {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+        }
+        
+        .btn-primary {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        
+        .btn-secondary {
+            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: var(--tg-theme-destructive-text-color, #ff3b30);
+            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">🎯 Бінго Завдання</div>
+        
+        <div id="loading" class="loading">
+            Завантаження завдань...
+        </div>
+        
+        <div id="error" class="error" style="display: none;">
+            Помилка завантаження завдань
+        </div>
+        
+        <div id="bingo-container" style="display: none;">
+            <div class="bingo-grid" id="bingoGrid">
+                <!-- Клітинки будуть згенеровані динамічно -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальне вікно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-description" id="modalDescription"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="completeBtn">Виконано</button>
+                <button class="btn btn-secondary" id="closeBtn">Закрити</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ініціалізація Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        
+        // Конфігурація - замініть на ваш n8n webhook URL
+        const N8N_WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/miniapp';
+        
+        let tasks = [];
+        let currentTaskIndex = null;
+        
+        // Отримання користувача з Telegram
+        const user = tg.initDataUnsafe?.user || { id: 'demo', first_name: 'Demo' };
+        
+        // Завантаження завдань з n8n
+        async function loadTasks() {
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'get_tasks',
+                        user_id: user.id,
+                        user_name: user.first_name
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Помилка завантаження');
+                }
+                
+                const data = await response.json();
+                tasks = data.tasks || getDefaultTasks();
+                
+                renderBingoGrid();
+                
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                // Використовуємо демо завдання якщо не вдалося завантажити з n8n
+                tasks = getDefaultTasks();
+                renderBingoGrid();
+            }
+        }
+        
+        // Дефолтні завдання для демо
+        function getDefaultTasks() {
+            return [
+                { id: 1, title: "Ранкова зарядка", description: "Виконати 15-хвилинну ранкову зарядку", completed: false },
+                { id: 2, title: "Читання книги", description: "Прочитати 20 сторінок улюбленої книги", completed: false },
+                { id: 3, title: "Вода", description: "Випити 8 склянок води протягом дня", completed: true },
+                { id: 4, title: "Прогулянка", description: "Прогулятися на свіжому повітрі 30 хвилин", completed: false },
+                { id: 5, title: "Медитація", description: "5 хвилин медитації або дихальних вправ", completed: false },
+                { id: 6, title: "Прибирання", description: "Прибрати робоче місце", completed: true },
+                { id: 7, title: "Дзвінок близьким", description: "Подзвонити родині або друзям", completed: false },
+                { id: 8, title: "Новий навик", description: "Вивчити щось нове 15 хвилин", completed: false },
+                { id: 9, title: "Здорове харчування", description: "З'їсти корисний сніданок", completed: false }
+            ];
+        }
+        
+        // Відображення сітки бінго
+        function renderBingoGrid() {
+            const grid = document.getElementById('bingoGrid');
+            const container = document.getElementById('bingo-container');
+            const loading = document.getElementById('loading');
+            
+            grid.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const cell = document.createElement('button');
+                cell.className = `bingo-cell ${task.completed ? 'completed' : ''}`;
+                cell.textContent = task.title;
+                cell.onclick = () => openTaskModal(index);
+                grid.appendChild(cell);
+            });
+            
+            loading.style.display = 'none';
+            container.style.display = 'block';
+        }
+        
+        // Відкриття модального вікна
+        function openTaskModal(taskIndex) {
+            currentTaskIndex = taskIndex;
+            const task = tasks[taskIndex];
+            
+            document.getElementById('modalTitle').textContent = task.title;
+            document.getElementById('modalDescription').textContent = task.description;
+            document.getElementById('modal').style.display = 'block';
+            
+            const completeBtn = document.getElementById('completeBtn');
+            completeBtn.textContent = task.completed ? 'Скасувати' : 'Виконано';
+            completeBtn.onclick = toggleTaskComplete;
+        }
+        
+        // Закриття модального вікна
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            currentTaskIndex = null;
+        }
+        
+        // Перемикання статусу завдання
+        async function toggleTaskComplete() {
+            if (currentTaskIndex === null) return;
+            
+            const task = tasks[currentTaskIndex];
+            task.completed = !task.completed;
+            
+            // Відправка оновлення в n8n
+            try {
+                await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'update_task',
+                        user_id: user.id,
+                        task_id: task.id,
+                        completed: task.completed
+                    })
+                });
+            } catch (error) {
+                console.error('Error updating task:', error);
+            }
+            
+            renderBingoGrid();
+            closeModal();
+            
+            // Показуємо повідомлення в Telegram
+            if (task.completed) {
+                tg.showAlert(`Завдання "${task.title}" виконано! 🎉`);
+            }
+        }
+        
+        // Обробка подій
+        document.getElementById('closeBtn').onclick = closeModal;
+        
+        // Закриття модального вікна при кліку поза ним
+        document.getElementById('modal').onclick = function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        };
+        
+        // Ініціалізація
+        loadTasks();
+        
+        // Налаштування Telegram кнопок
+        tg.MainButton.setText("Оновити завдання");
+        tg.MainButton.onClick(loadTasks);
+        tg.MainButton.show();
+    </script>
+</body>
+</html>
