@@ -356,6 +356,7 @@
             ];
         }
         
+        
         // Відображення сітки бінго
         function renderBingoGrid() {
             const grid = document.getElementById('bingoGrid');
@@ -386,7 +387,7 @@
             document.getElementById('modal').style.display = 'block';
             
             const completeBtn = document.getElementById('completeBtn');
-            completeBtn.textContent = task.completed ? 'Скасувати' : 'Виконано';
+            completeBtn.textContent = task.completed ? 'Скасувати' : 'Готово';
             completeBtn.onclick = toggleTaskComplete;
         }
         
@@ -401,9 +402,127 @@
             if (currentTaskIndex === null) return;
             
             const task = tasks[currentTaskIndex];
-            task.completed = !task.completed;
             
-            // Відправка оновлення в n8n
+            // Якщо завдання ще не виконано - пропонуємо зробити фото
+            if (!task.completed) {
+                // Закриваємо модальне вікно
+                closeModal();
+                
+                // Пропонуємо зробити фото через Telegram
+                tg.showConfirm(
+                    `Зробити фото для завдання "${task.title}"?`,
+                    (confirmed) => {
+                        if (confirmed) {
+                            // Відкриваємо камеру через Telegram
+                            requestPhoto(task);
+                        }
+                    }
+                );
+            } else {
+                // Якщо завдання вже виконано - скасовуємо його
+                task.completed = false;
+                await updateTaskStatus(task);
+                renderBingoGrid();
+                closeModal();
+            }
+        }
+        
+        // Запит на фото через Telegram Web App
+        function requestPhoto(task) {
+            // Метод 1: Використання MainButton для запиту фото
+            tg.MainButton.setText("📷 Зробити фото");
+            tg.MainButton.show();
+            tg.MainButton.onClick(() => {
+                // Відкриваємо інпут для файлу
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.capture = 'environment'; // Відкриває камеру
+                
+                fileInput.onchange = async (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        await handlePhotoUpload(task, file);
+                    }
+                };
+                
+                fileInput.click();
+                
+                // Приховуємо кнопку після використання
+                tg.MainButton.hide();
+            });
+            
+            // Метод 2: Альтернативно можна використати HapticFeedback
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+        
+        // Обробка завантаження фото
+        async function handlePhotoUpload(task, file) {
+            try {
+                // Показуємо індикатор завантаження
+                tg.MainButton.setText("📤 Завантаження...");
+                tg.MainButton.show();
+                tg.MainButton.showProgress();
+                
+                // Конвертуємо файл в base64 для відправки
+                const base64Photo = await fileToBase64(file);
+                
+                // Позначаємо завдання як виконане
+                task.completed = true;
+                
+                // Відправляємо дані з фото в n8n
+                await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'update_task_with_photo',
+                        user_id: user.id,
+                        task_id: task.id,
+                        completed: task.completed,
+                        photo: base64Photo,
+                        photo_name: `task_${task.id}_${user.id}_${Date.now()}.jpg`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                // Оновлюємо інтерфейс
+                renderBingoGrid();
+                
+                // Показуємо успіх
+                tg.showAlert(`Фото для завдання "${task.title}" успішно завантажено! 🎉`);
+                tg.HapticFeedback.notificationOccurred('success');
+                
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                task.completed = false; // Повертаємо статус
+                tg.showAlert('Помилка завантаження фото. Спробуйте ще раз.');
+                tg.HapticFeedback.notificationOccurred('error');
+            } finally {
+                // Приховуємо індикатор завантаження
+                tg.MainButton.hide();
+                tg.MainButton.hideProgress();
+                
+                // Повертаємо стандартну кнопку
+                tg.MainButton.setText("📷 Оновити завдання");
+                tg.MainButton.onClick(loadTasks);
+                tg.MainButton.show();
+            }
+        }
+        
+        // Конвертація файлу в base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        // Оновлення статусу завдання (без фото)
+        async function updateTaskStatus(task) {
             try {
                 await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
@@ -419,14 +538,6 @@
                 });
             } catch (error) {
                 console.error('Error updating task:', error);
-            }
-            
-            renderBingoGrid();
-            closeModal();
-            
-            // Показуємо повідомлення в Telegram
-            if (task.completed) {
-                tg.showAlert(`Завдання "${task.title}" виконано! 🎉`);
             }
         }
         
@@ -444,7 +555,7 @@
         loadTasks();
         
         // Налаштування Telegram кнопок
-        tg.MainButton.setText("Оновити завдання");
+        tg.MainButton.setText("📷 Оновити завдання");
         tg.MainButton.onClick(loadTasks);
         tg.MainButton.show();
     </script>
