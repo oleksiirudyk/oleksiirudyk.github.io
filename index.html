@@ -59,34 +59,53 @@
         const user = tg.initDataUnsafe?.user || { id: 'demo', first_name: 'Demo' };
         
         // Завантаження завдань з n8n
+        // async function loadTasks() {
+        //     try {
+        //         const response = await fetch(N8N_WEBHOOK_URL, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'ngrok-skip-browser-warning': 'true', // Для ngrok
+        //                 'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
+        //             },
+        //             body: JSON.stringify({
+        //                 action: 'get_tasks',
+        //                 user_id: user.id,
+        //                 user_name: user.first_name
+        //             })
+        //         });
+                
+        //         if (!response.ok) {
+        //             throw new Error('Помилка завантаження');
+        //         }
+                
+        //         const data = await response.json();
+        //         tasks = data.tasks || getDefaultTasks();
+                
+        //         renderBingoGrid();
+                
+        //     } catch (error) {
+        //         console.error('Error loading tasks:', error);
+        //         // Використовуємо демо завдання якщо не вдалося завантажити з n8n
+        //         tasks = getDefaultTasks();
+        //         renderBingoGrid();
+        //     }
+        // }
         async function loadTasks() {
             try {
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true', // Для ngrok
-                        'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
-                    },
-                    body: JSON.stringify({
-                        action: 'get_tasks',
-                        user_id: user.id,
-                        user_name: user.first_name
-                    })
-                });
+                // Відправляємо команду боту через Telegram Web App
+                tg.sendData(JSON.stringify({
+                    action: 'get_tasks',
+                    user_id: user.id,
+                    user_name: user.first_name
+                }));
                 
-                if (!response.ok) {
-                    throw new Error('Помилка завантаження');
-                }
-                
-                const data = await response.json();
-                tasks = data.tasks || getDefaultTasks();
-                
+                // Тимчасово використовуємо демо дані
+                tasks = getDefaultTasks();
                 renderBingoGrid();
                 
             } catch (error) {
                 console.error('Error loading tasks:', error);
-                // Використовуємо демо завдання якщо не вдалося завантажити з n8n
                 tasks = getDefaultTasks();
                 renderBingoGrid();
             }
