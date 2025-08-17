@@ -268,6 +268,7 @@
                     body: JSON.stringify({
                         action: 'update_task_with_photo',
                         user_id: user.id,
+                        user_name: user.username,
                         task_id: task.id,
                         completed: task.completed,
                         photo: base64Photo,
