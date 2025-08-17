@@ -156,17 +156,17 @@
             if (!task.completed) {
                 // Закриваємо модальне вікно
                 closeModal();
-                
-                // Пропонуємо зробити фото через Telegram
-                tg.showConfirm(
-                    `Зробити фото для завдання "${task.title}"?`,
-                    (confirmed) => {
-                        if (confirmed) {
-                            // Відкриваємо камеру через Telegram
-                            requestPhoto(task);
-                        }
-                    }
-                );
+                requestPhoto(task)
+                // // Пропонуємо зробити фото через Telegram
+                // tg.showConfirm(
+                //     `Зробити фото для завдання "${task.title}"?`,
+                //     (confirmed) => {
+                //         if (confirmed) {
+                //             // Відкриваємо камеру через Telegram
+                //             requestPhoto(task);
+                //         }
+                //     }
+                // );
             } else {
                 // Якщо завдання вже виконано - скасовуємо його
                 task.completed = false;
@@ -176,20 +176,20 @@
             }
         }
         
-       // Запит на фото через Telegram Web App (спрощений)
+        // Запит на фото через Telegram Web App (спрощений)
         function requestPhoto(task) {
             tg.showPopup({
                 title: "Додати фото",
                 message: `Як додати фото для завдання "${task.title}"?`,
                 buttons: [
-                    {id: "camera", type: "default", text: "📷 Зробити фото"},
-                    {id: "gallery", type: "default", text: "🖼️ Вибрати з галереї"},
-                    {id: "cancel", type: "cancel", text: "Скасувати"}
+                    {id: "a_camera", type: "default", text: "📷 Зробити фото"},
+                    {id: "b_gallery", type: "default", text: "🖼️ Вибрати з галереї"},
+                    {id: "z_cancel", type: "cancel", text: "Скасувати"}
                 ]
             }, (buttonId) => {
-                if (buttonId === "camera") {
+                if (buttonId === "a_camera") {
                     openCamera(task);
-                } else if (buttonId === "gallery") {
+                } else if (buttonId === "b_gallery") {
                     openGallery(task);
                 }
             });
@@ -200,7 +200,7 @@
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
             fileInput.accept = 'image/*';
-            fileInput.capture = 'environment';
+            fileInput.capture = 'camera';
             
             fileInput.onchange = async (event) => {
                 const file = event.target.files[0];
