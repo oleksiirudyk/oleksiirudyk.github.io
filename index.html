@@ -197,21 +197,17 @@
                 
                 fileInput.click();
                 
-                // Приховуємо кнопку після використання
-                tg.MainButton.hide();
             });
             
             // Метод 2: Альтернативно можна використати HapticFeedback
             tg.HapticFeedback.impactOccurred('medium');
         }
         
-        // Обробка завантаження фото
+        // Обробка завантаження фото (без головної кнопки)
         async function handlePhotoUpload(task, file) {
             try {
-                // Показуємо індикатор завантаження
-                tg.MainButton.setText("📤 Завантаження...");
-                tg.MainButton.show();
-                tg.MainButton.showProgress();
+                // Показуємо тост замість кнопки
+                tg.showAlert("📤 Завантаження фото...");
                 
                 // Конвертуємо файл в base64 для відправки
                 const base64Photo = await fileToBase64(file);
@@ -245,18 +241,9 @@
                 
             } catch (error) {
                 console.error('Error uploading photo:', error);
-                task.completed = false; // Повертаємо статус
+                task.completed = false;
                 tg.showAlert('Помилка завантаження фото. Спробуйте ще раз.');
                 tg.HapticFeedback.notificationOccurred('error');
-            } finally {
-                // Приховуємо індикатор завантаження
-                tg.MainButton.hide();
-                tg.MainButton.hideProgress();
-                
-                // Повертаємо стандартну кнопку
-                tg.MainButton.setText("📷 Оновити завдання");
-                tg.MainButton.onClick(loadTasks);
-                tg.MainButton.show();
             }
         }
         
