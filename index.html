@@ -182,14 +182,14 @@
                 title: "Додати фото",
                 message: `Як додати фото для завдання "${task.title}"?`,
                 buttons: [
-                    {id: "a_camera", type: "default", text: "📷 Зробити фото"},
-                    {id: "b_gallery", type: "default", text: "🖼️ Вибрати з галереї"},
-                    {id: "z_cancel", type: "cancel", text: "Скасувати"}
+                    {id: "1", type: "default", text: "📷 Зробити фото"},
+                    {id: "2", type: "default", text: "🖼️ Вибрати з галереї"},
+                    {id: "cancel", type: "cancel", text: "Скасувати"}
                 ]
             }, (buttonId) => {
-                if (buttonId === "a_camera") {
+                if (buttonId === "1") {
                     openCamera(task);
-                } else if (buttonId === "b_gallery") {
+                } else if (buttonId === "2") {
                     openGallery(task);
                 }
             });
