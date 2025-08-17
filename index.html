@@ -398,6 +398,8 @@
         }
         
         // Перемикання статусу завдання
+        
+        // Перемикання статусу завдання (оновлена версія)
         async function toggleTaskComplete() {
             if (currentTaskIndex === null) return;
             
@@ -408,52 +410,72 @@
                 // Закриваємо модальне вікно
                 closeModal();
                 
-                // Пропонуємо зробити фото через Telegram
-                tg.showConfirm(
-                    `Зробити фото для завдання "${task.title}"?`,
-                    (confirmed) => {
-                        if (confirmed) {
-                            // Відкриваємо камеру через Telegram
-                            requestPhoto(task);
-                        }
-                    }
-                );
+                // Показуємо варіанти додавання фото
+                requestPhoto(task);
             } else {
                 // Якщо завдання вже виконано - скасовуємо його
                 task.completed = false;
                 await updateTaskStatus(task);
                 renderBingoGrid();
                 closeModal();
+                
+                tg.showAlert("Завдання скасовано");
+                tg.HapticFeedback.impactOccurred('light');
             }
         }
         
         // Запит на фото через Telegram Web App
         function requestPhoto(task) {
-            // Метод 1: Використання MainButton для запиту фото
-            tg.MainButton.setText("📷 Зробити фото");
-            tg.MainButton.show();
-            tg.MainButton.onClick(() => {
-                // Відкриваємо інпут для файлу
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
-                fileInput.capture = 'environment'; // Відкриває камеру
-                
-                fileInput.onchange = async (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        await handlePhotoUpload(task, file);
-                    }
-                };
-                
-                fileInput.click();
-                
-                // Приховуємо кнопку після використання
-                tg.MainButton.hide();
+            // Показуємо варіанти через Telegram popup
+            tg.showPopup({
+                title: "Додати фото",
+                message: `Як додати фото для завдання "${task.title}"?`,
+                buttons: [
+                    {id: "camera", type: "default", text: "📷 Зробити фото"},
+                    {id: "gallery", type: "default", text: "🖼️ Вибрати з галереї"},
+                    {id: "cancel", type: "cancel", text: "Скасувати"}
+                ]
+            }, (buttonId) => {
+                if (buttonId === "camera") {
+                    openCamera(task);
+                } else if (buttonId === "gallery") {
+                    openGallery(task);
+                }
             });
+        }
+
+        // Відкриття камери (пряме фото)
+        function openCamera(task) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.capture = 'environment'; // Примусово камера
             
-            // Метод 2: Альтернативно можна використати HapticFeedback
-            tg.HapticFeedback.impactOccurred('medium');
+            fileInput.onchange = async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    await handlePhotoUpload(task, file);
+                }
+            };
+            
+            fileInput.click();
+        }
+        
+        // Відкриття галереї (вибір існуючого фото)
+        function openGallery(task) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            // Без capture - дозволяє вибір з галереї
+            
+            fileInput.onchange = async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    await handlePhotoUpload(task, file);
+                }
+            };
+            
+            fileInput.click();
         }
         
         // Обробка завантаження фото
