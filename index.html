@@ -65,6 +65,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true', // Для ngrok
+                        'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
                     },
                     body: JSON.stringify({
                         action: 'get_tasks',
