@@ -50,7 +50,7 @@
         tg.ready();
         
         // Конфігурація - замініть на ваш n8n webhook URL
-        const N8N_WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/miniapp';
+        const N8N_WEBHOOK_URL = 'https://f2beb0dcc8e9.ngrok-free.app/webhook-test/2a761ffd-bd75-457d-accf-d3eff9cc3fd0/webhook';
         
         let tasks = [];
         let currentTaskIndex = null;
@@ -157,16 +157,6 @@
                 // Закриваємо модальне вікно
                 closeModal();
                 requestPhoto(task)
-                // // Пропонуємо зробити фото через Telegram
-                // tg.showConfirm(
-                //     `Зробити фото для завдання "${task.title}"?`,
-                //     (confirmed) => {
-                //         if (confirmed) {
-                //             // Відкриваємо камеру через Telegram
-                //             requestPhoto(task);
-                //         }
-                //     }
-                // );
             } else {
                 // Якщо завдання вже виконано - скасовуємо його
                 task.completed = false;
