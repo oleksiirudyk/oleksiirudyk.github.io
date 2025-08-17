@@ -65,13 +65,11 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        // 'ngrok-skip-browser-warning': 'true', // Для ngrok
-                        // 'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
                     },
                     body: JSON.stringify({
                         action: 'get_tasks',
                         user_id: user.id,
-                        user_name: user.first_name
+                        user_name: user.username
                     })
                 });
                 
@@ -80,8 +78,16 @@
                 }
                 
                 const data = await response.json();
-                tasks = data.tasks || getDefaultTasks();
-                
+                tasks = getDefaultTasks();
+                if (data.tasks) {
+                    tasks.forEach(task => {
+                        const serverTask = data.tasks.find(t => t.id === task.id);
+                        if (serverTask) {
+                            task.completed = serverTask.completed;
+                        }
+                    });
+                }
+
                 renderBingoGrid();
                 
             } catch (error) {
