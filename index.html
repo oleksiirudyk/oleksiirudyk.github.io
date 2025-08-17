@@ -50,7 +50,7 @@
         tg.ready();
         
         // Конфігурація - замініть на ваш n8n webhook URL
-        const N8N_WEBHOOK_URL = 'https://f2beb0dcc8e9.ngrok-free.app/webhook-test/2a761ffd-bd75-457d-accf-d3eff9cc3fd0/webhook';
+        const N8N_WEBHOOK_URL = 'https://f2beb0dcc8e9.ngrok-free.app/webhook-test/ea24ddd5-a8d1-4c94-ae1d-144b1a6af0bf';
         
         let tasks = [];
         let currentTaskIndex = null;
@@ -59,57 +59,57 @@
         const user = tg.initDataUnsafe?.user || { id: 'demo', first_name: 'Demo' };
         
         // Завантаження завдань з n8n
-        // async function loadTasks() {
-        //     try {
-        //         const response = await fetch(N8N_WEBHOOK_URL, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'ngrok-skip-browser-warning': 'true', // Для ngrok
-        //                 'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
-        //             },
-        //             body: JSON.stringify({
-        //                 action: 'get_tasks',
-        //                 user_id: user.id,
-        //                 user_name: user.first_name
-        //             })
-        //         });
-                
-        //         if (!response.ok) {
-        //             throw new Error('Помилка завантаження');
-        //         }
-                
-        //         const data = await response.json();
-        //         tasks = data.tasks || getDefaultTasks();
-                
-        //         renderBingoGrid();
-                
-        //     } catch (error) {
-        //         console.error('Error loading tasks:', error);
-        //         // Використовуємо демо завдання якщо не вдалося завантажити з n8n
-        //         tasks = getDefaultTasks();
-        //         renderBingoGrid();
-        //     }
-        // }
         async function loadTasks() {
             try {
-                // Відправляємо команду боту через Telegram Web App
-                tg.sendData(JSON.stringify({
-                    action: 'get_tasks',
-                    user_id: user.id,
-                    user_name: user.first_name
-                }));
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'ngrok-skip-browser-warning': 'true', // Для ngrok
+                        // 'User-Agent': 'TelegramBot/1.0' // Додатковий заголовок
+                    },
+                    body: JSON.stringify({
+                        action: 'get_tasks',
+                        user_id: user.id,
+                        user_name: user.first_name
+                    })
+                });
                 
-                // Тимчасово використовуємо демо дані
-                tasks = getDefaultTasks();
+                if (!response.ok) {
+                    throw new Error('Помилка завантаження');
+                }
+                
+                const data = await response.json();
+                tasks = data.tasks || getDefaultTasks();
+                
                 renderBingoGrid();
                 
             } catch (error) {
                 console.error('Error loading tasks:', error);
+                // Використовуємо демо завдання якщо не вдалося завантажити з n8n
                 tasks = getDefaultTasks();
                 renderBingoGrid();
             }
         }
+        // async function loadTasks() {
+        //     try {
+        //         // Відправляємо команду боту через Telegram Web App
+        //         tg.sendData(JSON.stringify({
+        //             action: 'get_tasks',
+        //             user_id: user.id,
+        //             user_name: user.first_name
+        //         }));
+                
+        //         // Тимчасово використовуємо демо дані
+        //         tasks = getDefaultTasks();
+        //         renderBingoGrid();
+                
+        //     } catch (error) {
+        //         console.error('Error loading tasks:', error);
+        //         tasks = getDefaultTasks();
+        //         renderBingoGrid();
+        //     }
+        // }
         
         // Дефолтні завдання для демо
         function getDefaultTasks() {
