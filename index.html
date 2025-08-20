@@ -50,8 +50,8 @@
         tg.ready();
         
         // Конфігурація - замініть на ваш n8n webhook URL
-        // const N8N_WEBHOOK_URL = 'https://f2beb0dcc8e9.ngrok-free.app/webhook-test/21792f71-6dd9-468e-b59c-5f01a49d2e9c';
-        const N8N_WEBHOOK_URL = 'https://n8n.lobstrrrobert.org/webhook/21792f71-6dd9-468e-b59c-5f01a49d2e9c';
+        const N8N_WEBHOOK_URL = 'https://n8n.lobstrrrobert.org/webhook-test/21792f71-6dd9-468e-b59c-5f01a49d2e9c';
+        // const N8N_WEBHOOK_URL = 'https://n8n.lobstrrrobert.org/webhook/21792f71-6dd9-468e-b59c-5f01a49d2e9c';
         
         let tasks = [];
         let currentTaskIndex = null;
@@ -103,25 +103,6 @@
                 renderBingoGrid();
             }
         }
-        // async function loadTasks() {
-        //     try {
-        //         // Відправляємо команду боту через Telegram Web App
-        //         tg.sendData(JSON.stringify({
-        //             action: 'get_tasks',
-        //             user_id: user.id,
-        //             user_name: user.first_name
-        //         }));
-                
-        //         // Тимчасово використовуємо демо дані
-        //         tasks = getDefaultTasks();
-        //         renderBingoGrid();
-                
-        //     } catch (error) {
-        //         console.error('Error loading tasks:', error);
-        //         tasks = getDefaultTasks();
-        //         renderBingoGrid();
-        //     }
-        // }
         
         // Дефолтні завдання для демо
         function getDefaultTasks() {
@@ -283,10 +264,10 @@
                 if (data.tasks) {
                     tg.showAlert(`Фото для завдання "${task.title}" успішно завантажено!🎉`);
                     const serverTask = data.tasks.find(t => t.id === task.id);
-                        if (serverTask) {
-                            task.completed = serverTask.completed;
-                            task.inAnalysis = serverTask.inAnalysis;
-                        }
+                    if (serverTask) {
+                        task.completed = serverTask.completed;
+                        task.inAnalysis = serverTask.inAnalysis;
+                    }
                 }
 
                 
