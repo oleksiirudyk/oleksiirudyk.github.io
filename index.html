@@ -61,6 +61,11 @@
         
         // Завантаження завдань з n8n
         async function loadTasks() {
+            const container = document.getElementById('bingo-container');
+            const loading = document.getElementById('loading');
+            
+            loading.style.display = 'block';
+            container.style.display = 'none';
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
