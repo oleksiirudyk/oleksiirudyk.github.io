@@ -36,7 +36,7 @@
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-description" id="modalDescription"></div>
             <div class="modal-buttons">
-                <button class="btn btn-primary" id="completeBtn">Готово</button>
+                <button class="btn btn-primary" id="completeBtn">Виконати</button>
                 <button class="btn btn-secondary" id="closeBtn">Закрити</button>
             </div>
         </div>
@@ -126,15 +126,15 @@
         // Дефолтні завдання для демо
         function getDefaultTasks() {
             return [
-                { id: 1, title: "1.Злови момент щастя", description: "Зроби фото людини, яка щиро сміється", completed: false },
-                { id: 2, title: "2.Погляд кохання", description: "Сфотографуй момент, коли хтось закохано дивиться на іншу людину", completed: false },
-                { id: 3, title: "3.Селфі з незнайомцем", description: "Зроби селфі з гостем, якого ще не знав/ла до весілля", completed: false },
-                { id: 4, title: "4.Весілля очима дитини", description: "Зроби фото з найнеочікуванішого ракурсу (знизу, з-під столу, через келих)", completed: false },
-                { id: 5, title: "5.Підозріло смачний момент", description: "Сфотографуй когось, хто надто щасливий, коли їсть.", completed: false },
-                { id: 6, title: "6.Я — твоя декорація", description: "Сфотографуй людину, яка ідеально вписалась у фон/декор (наче вона частина інтер’єру).", completed: false },
-                { id: 7, title: "7.Весільний double", description: "Знайди 2 гостей в однаковому кольорі одягу або схожому образі — зроби “фото-близнюків”.", completed: false },
-                { id: 8, title: "8.Бохо-деталь", description: "Знайди й сфотографуй найкрутіший елемент декору (ловець снів, макраме, лампа, квітка, деталь на сукні тощо).", completed: false },
-                { id: 9, title: "9.Групове хаос-селфі", description: "Збери 4+ людей і зробіть якомога абсурдніше або дивніше групове селфі (емоції, пози, предмети — усе дозволено).", completed: false }
+                { id: 1, title: "1.Злови момент щастя", description: "Зроби фото людини, яка щиро сміється", completed: false, inAnalysis: false},
+                { id: 2, title: "2.Погляд кохання", description: "Сфотографуй момент, коли хтось закохано дивиться на іншу людину", completed: false, inAnalysis: false },
+                { id: 3, title: "3.Селфі з незнайомцем", description: "Зроби селфі з гостем, якого ще не знав/ла до весілля", completed: false, inAnalysis: false },
+                { id: 4, title: "4.Весілля очима дитини", description: "Зроби фото з найнеочікуванішого ракурсу (знизу, з-під столу, через келих)", completed: false, inAnalysis: false },
+                { id: 5, title: "5.Підозріло смачний момент", description: "Сфотографуй когось, хто надто щасливий, коли їсть.", completed: false, inAnalysis: false },
+                { id: 6, title: "6.Я — твоя декорація", description: "Сфотографуй людину, яка ідеально вписалась у фон/декор (наче вона частина інтер’єру).", completed: false, inAnalysis: false },
+                { id: 7, title: "7.Весільний double", description: "Знайди 2 гостей в однаковому кольорі одягу або схожому образі — зроби “фото-близнюків”.", completed: false, inAnalysis: false },
+                { id: 8, title: "8.Бохо-деталь", description: "Знайди й сфотографуй найкрутіший елемент декору (ловець снів, макраме, лампа, квітка, деталь на сукні тощо).", completed: false, inAnalysis: false },
+                { id: 9, title: "9.Групове хаос-селфі", description: "Збери 4+ людей і зробіть якомога абсурдніше або дивніше групове селфі (емоції, пози, предмети — усе дозволено).", completed: false, inAnalysis: false }
             ];
         }
         
@@ -149,7 +149,7 @@
             
             tasks.forEach((task, index) => {
                 const cell = document.createElement('button');
-                cell.className = `bingo-cell ${task.completed ? 'completed' : ''}`;
+                cell.className = `bingo-cell ${task.completed ? 'completed' : (task.inAnalysis ? 'inAnalysis' : '')}`;
                 cell.textContent = task.title;
                 cell.onclick = () => openTaskModal(index);
                 grid.appendChild(cell);
@@ -169,7 +169,7 @@
             document.getElementById('modal').style.display = 'block';
             
             const completeBtn = document.getElementById('completeBtn');
-            completeBtn.textContent = task.completed ? 'Скасувати' : 'Готово';
+            completeBtn.textContent = (task.completed | task.inAnalysis) ? 'Скасувати' : 'Готово';
             completeBtn.onclick = toggleTaskComplete;
         }
         
@@ -193,7 +193,7 @@
             } else {
                 // Якщо завдання вже виконано - скасовуємо його
                 task.completed = false;
-                await updateTaskStatus(task);
+                // await updateTaskStatus(task);
                 renderBingoGrid();
                 closeModal();
             }
@@ -253,19 +253,12 @@
             fileInput.click();
         }
         
-        // Обробка завантаження фото (без головної кнопки)
         async function handlePhotoUpload(task, file) {
             try {
-                // Показуємо тост замість кнопки
                 tg.showAlert("📤 Завантаження фото...");
                 
-                // Конвертуємо файл в base64 для відправки
                 const base64Photo = await fileToBase64(file);
                 
-                // Позначаємо завдання як виконане
-                // task.completed = true;
-                
-                // Відправляємо дані з фото в n8n
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
@@ -288,9 +281,11 @@
                 }
                 const data = await response.json();
                 if (data.tasks) {
+                    tg.showAlert(`Фото для завдання "${task.title}" успішно завантажено!🎉`);
                     const serverTask = data.tasks.find(t => t.id === task.id);
                         if (serverTask) {
                             task.completed = serverTask.completed;
+                            task.inAnalysis = serverTask.inAnalysis;
                         }
                 }
 
