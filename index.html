@@ -258,10 +258,10 @@
                 const base64Photo = await fileToBase64(file);
                 
                 // Позначаємо завдання як виконане
-                task.completed = true;
+                // task.completed = true;
                 
                 // Відправляємо дані з фото в n8n
-                await fetch(N8N_WEBHOOK_URL, {
+                const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -277,6 +277,18 @@
                         timestamp: new Date().toISOString()
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error('Помилка завантаження');
+                }
+                const data = await response.json();
+                if (data.tasks) {
+                    const serverTask = data.tasks.find(t => t.id === task.id);
+                        if (serverTask) {
+                            task.completed = serverTask.completed;
+                        }
+                }
+
                 
                 // Оновлюємо інтерфейс
                 renderBingoGrid();
