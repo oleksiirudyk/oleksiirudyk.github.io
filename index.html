@@ -151,7 +151,7 @@
             document.getElementById('modal').style.display = 'block';
             
             const completeBtn = document.getElementById('completeBtn');
-            completeBtn.textContent = (task.completed | task.inAnalysis) ? 'Скасувати' : 'Готово';
+            completeBtn.textContent = (task.completed | task.inAnalysis) ? 'Скасувати' : 'Виконати';
             completeBtn.onclick = toggleTaskComplete;
         }
         
@@ -175,6 +175,7 @@
             } else {
                 // Якщо завдання вже виконано - скасовуємо його
                 task.completed = false;
+                task.inAnalysis = false;
                 // await updateTaskStatus(task);
                 renderBingoGrid();
                 closeModal();
