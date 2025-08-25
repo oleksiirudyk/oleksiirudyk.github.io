@@ -96,7 +96,7 @@
                 }
 
                 renderBingoGrid();
-                
+                checkAllCompleted(tasks); 
             } catch (error) {
                 console.error('Error loading tasks:', error);
                 // Використовуємо демо завдання якщо не вдалося завантажити з n8n
@@ -341,7 +341,6 @@
         
         // Ініціалізація
         loadTasks();
-        checkAllCompleted(tasks);
         
         // Налаштування Telegram кнопок
         tg.MainButton.setText("📷 Оновити завдання");
