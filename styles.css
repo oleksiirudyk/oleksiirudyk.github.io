@@ -26,8 +26,10 @@ body {
     left: -20px;
     width: 150px;
     height: 150px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 30 C15 25, 25 15, 35 25 C45 15, 55 25, 50 30 C55 35, 45 45, 35 35 C25 45, 15 35, 20 30 Z" fill="%23e8a87c"/><path d="M30 40 C25 35, 35 25, 45 35 C55 25, 65 35, 60 40 C65 45, 55 55, 45 45 C35 55, 25 45, 30 40 Z" fill="%23d4926f"/></svg>') no-repeat;
+    background: url('./flower.png') no-repeat;
     background-size: contain;
+    transform: rotate(-45deg); /* повертає на 45 градусів */
+    transform-origin: center;
 }
 
 .flower-bottom-right {
@@ -35,8 +37,10 @@ body {
     right: -20px;
     width: 180px;
     height: 180px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10 20 C5 15, 15 5, 25 15 C35 5, 45 15, 40 20 C45 25, 35 35, 25 25 C15 35, 5 25, 10 20 Z" fill="%23e8a87c"/><path d="M20 30 C15 25, 25 15, 35 25 C45 15, 55 25, 50 30 C55 35, 45 45, 35 35 C25 45, 15 35, 20 30 Z" fill="%23d4926f"/><path d="M30 40 C25 35, 35 25, 45 35 C55 25, 65 35, 60 40 C65 45, 55 55, 45 45 C35 55, 25 45, 30 40 Z" fill="%23c17d5a"/></svg>') no-repeat;
+    background: url('./flower.png') no-repeat;
     background-size: contain;
+    transform: rotate(45deg); /* повертає на 45 градусів */
+    transform-origin: center;
 }
 
 .container {
