@@ -238,7 +238,11 @@
         
         async function handlePhotoUpload(task, file) {
             try {
-                tg.showConfirm("📤 Завантаження фото, аналізую...");
+                tg.showPopup({
+                    title: "Завантаження",
+                    message: `📤 Завантаження фото, аналізую...`,
+                    buttons: [{id: "cancel", type: "cancel", text: "OK"}]
+                });
                 
                 task.inAnalysis = true;
                 renderBingoGrid();
