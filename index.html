@@ -238,8 +238,11 @@
         
         async function handlePhotoUpload(task, file) {
             try {
-                tg.showAlert("📤 Завантаження фото...");
+                tg.showConfirm("📤 Завантаження фото, аналізую...");
                 
+                task.inAnalysis = true;
+                renderBingoGrid();
+
                 const base64Photo = await fileToBase64(file);
                 
                 const response = await fetch(N8N_WEBHOOK_URL, {
@@ -272,14 +275,9 @@
                     }
                 }
 
-                
-                // Оновлюємо інтерфейс
                 renderBingoGrid();
-                
-                // Показуємо успіх
-                // tg.showAlert(`Фото для завдання "${task.title}" успішно завантажено! 🎉`);
                 tg.HapticFeedback.notificationOccurred('success');
-                
+                checkAllCompleted(tasks)
             } catch (error) {
                 console.error('Error uploading photo:', error);
                 task.completed = false;
@@ -287,6 +285,19 @@
                 tg.HapticFeedback.notificationOccurred('error');
             }
         }
+
+        function checkAllCompleted(tasks) {
+            const allDone = tasks.every(task => task.completed);
+
+            if (allDone) {
+                tg.showPopup({
+                  title: "Вітаю!",
+                  message: "🎉 Усі завдання виконано! Ти герой фото-бінго!",
+                  buttons: [{type: "close", text: "👏"}]
+                });
+            }
+        }
+
         
         // Конвертація файлу в base64
         function fileToBase64(file) {

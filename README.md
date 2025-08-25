@@ -1,1 +1,1 @@
-# bingo-mini-app
+# wedding-photo-hunt-mini-app
