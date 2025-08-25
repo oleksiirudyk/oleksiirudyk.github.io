@@ -22,21 +22,21 @@ body {
 }
 
 .flower-top-left {
-    top: -20px;
-    left: -20px;
-    width: 150px;
-    height: 150px;
+    top: -100px;
+    left: -90px;
+    width: 400px;
+    height: 400px;
     background: url('./flower.png') no-repeat;
     background-size: contain;
-    transform: rotate(-45deg); /* повертає на 45 градусів */
+    transform: rotate(45deg); /* повертає на 45 градусів */
     transform-origin: center;
 }
 
 .flower-bottom-right {
-    bottom: -20px;
-    right: -20px;
-    width: 180px;
-    height: 180px;
+    bottom: -90px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
     background: url('./flower.png') no-repeat;
     background-size: contain;
     transform: rotate(45deg); /* повертає на 45 градусів */
