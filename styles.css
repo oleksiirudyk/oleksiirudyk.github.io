@@ -28,7 +28,6 @@ body {
     height: 400px;
     background: url('./flower.png') no-repeat;
     background-size: contain;
-    transform: rotate(45deg); /* повертає на 45 градусів */
     transform-origin: center;
 }
 
@@ -39,13 +38,12 @@ body {
     height: 400px;
     background: url('./flower.png') no-repeat;
     background-size: contain;
-    transform: rotate(45deg); /* повертає на 45 градусів */
     transform-origin: center;
 }
 
 .container {
     max-width: 300px; /*ширина екрану*/
-    margin: 0 auto;
+    margin: 80px auto 0;
     position: relative;
     z-index: 2;
 }
