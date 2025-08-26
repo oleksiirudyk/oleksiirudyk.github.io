@@ -23,7 +23,7 @@ body {
 
 .flower-top-left {
     top: -100px;
-    left: -90px;
+    left: -110px;
     width: 400px;
     height: 400px;
     background: url('./flower.png') no-repeat;
@@ -32,8 +32,8 @@ body {
 }
 
 .flower-bottom-right {
-    bottom: -90px;
-    right: -100px;
+    bottom: -70px;
+    right: -90px;
     width: 400px;
     height: 400px;
     background: url('./flower.png') no-repeat;
@@ -43,7 +43,7 @@ body {
 
 .container {
     max-width: 300px; /*ширина екрану*/
-    margin: 80px auto 0;
+    margin: 95px auto 0;
     position: relative;
     z-index: 2;
 }
