@@ -105,7 +105,7 @@ body {
     overflow: hidden;
 }
 
-.bingo-cell::before {
+/* .bingo-cell::before {
     content: '';
     position: absolute;
     top: -2px;
@@ -117,6 +117,21 @@ body {
     z-index: -1;
     opacity: 0;
     transition: opacity 0.3s ease;
+} */
+
+.bingo-cell::before {
+    content: attr(datanum); /* бере цифру з data-num */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;  /* можна підлаштувати */
+    font-weight: bold;
+    color: rgba(139, 69, 19, 0.1); /* напівпрозорий коричневий */
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(45deg, #f0d4b8, #e8a87c, #d4926f);
+
 }
 
 .bingo-cell:hover::before {
