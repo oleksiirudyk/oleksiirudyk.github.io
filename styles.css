@@ -122,14 +122,15 @@ body {
 .bingo-cell::before {
     content: attr(data-num); /* бере цифру з data-num */
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 48px;  /* можна підлаштувати */
+    font-size: 110px;
     font-weight: bold;
-    color: rgba(139, 69, 19, 0.1); /* напівпрозорий коричневий */
+    color: rgba(139, 69, 19, 0.1);
     pointer-events: none;
     z-index: 0;
+    font-family: 'Lemon';
 }
 
 .bingo-cell:hover::before {
