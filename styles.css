@@ -31,7 +31,7 @@ body {
     left: -110px;
     width: 400px;
     height: 400px;
-    background: url('./flower.png') no-repeat;
+    background: url('./flower1.png') no-repeat;
     background-size: contain;
     transform-origin: center;
 }
@@ -41,7 +41,7 @@ body {
     right: -90px;
     width: 400px;
     height: 400px;
-    background: url('./flower.png') no-repeat;
+    background: url('./flower1.png') no-repeat;
     background-size: contain;
     transform-origin: center;
 }
