@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-body {
+/* body {
     font-family: 'Georgia', serif;
     background: linear-gradient(135deg, #fef4e8 0%, #f9e8d3 100%);
     color: #8b4513;
@@ -12,7 +12,7 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
-}
+} */
 
 /* Декоративні елементи */
 .flower-decoration {
@@ -75,7 +75,7 @@ body {
     padding: 0 10px;
 }
 
-.bingo-cell {
+/* .bingo-cell {
     aspect-ratio: 1;
     background: rgba(255, 255, 255, 0.9);
     border: 2px solid #f0d4b8;
@@ -96,7 +96,7 @@ body {
     box-shadow: 0 2px 8px rgba(212, 146, 111, 0.2);
     position: relative;
     overflow: hidden;
-}
+} */
 
 .bingo-cell::before {
     content: '';
@@ -267,4 +267,91 @@ body {
     color: #c17d5a;
     font-style: italic;
     letter-spacing: 2px;
+}
+
+/* Базове */
+body {
+    font-size: 16px; /* зручний розмір шрифту */
+    padding: 4vw;
+    min-height: 100vh;
+}
+
+/* Контейнер */
+.container {
+    max-width: 90vw; /* адаптивна ширина */
+    margin: 10vh auto 0;
+    padding: 0 2vw;
+}
+
+/* Заголовки */
+.title {
+    font-size: 6vw; /* адаптивний розмір */
+    margin-bottom: 5vw;
+}
+
+.subtitle {
+    font-size: 4vw;
+    margin-bottom: 5vw;
+}
+
+/* Сітка */
+.bingo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3vw;
+    margin-bottom: 6vw;
+}
+
+/* Клітинка */
+.bingo-cell {
+    font-size: 3vw;
+    padding: 2vw;
+    min-height: 22vw; /* квадратні клітинки */
+    border-radius: 4vw;
+}
+
+/* Декор */
+.flower-top-left,
+.flower-bottom-right {
+    width: 35vw;
+    height: 35vw;
+    opacity: 0.6; /* щоб не заважали */
+}
+
+/* Модальне вікно */
+.modal-content {
+    width: 85vw;
+    max-width: 400px;
+    padding: 6vw;
+    border-radius: 6vw;
+}
+
+.modal-title {
+    font-size: 5vw;
+}
+
+.modal-description {
+    font-size: 3.5vw;
+}
+
+/* Кнопки */
+.btn {
+    padding: 3.5vw 5vw;
+    font-size: 3.5vw;
+    border-radius: 6vw;
+}
+
+.signature {
+    font-size: 3vw;
+    margin-top: 8vw;
+}
+
+/* 📱 Медіа-запити */
+@media (min-width: 768px) {
+    .container {
+        max-width: 400px;
+    }
+    .title { font-size: 32px; }
+    .subtitle { font-size: 18px; }
+    .bingo-cell { font-size: 12px; min-height: 100px; }
 }
