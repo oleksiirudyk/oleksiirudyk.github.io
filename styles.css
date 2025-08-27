@@ -122,7 +122,7 @@ body {
 .bingo-cell::before {
     content: attr(data-num); /* бере цифру з data-num */
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 48px;  /* можна підлаштувати */
@@ -130,8 +130,6 @@ body {
     color: rgba(139, 69, 19, 0.1); /* напівпрозорий коричневий */
     pointer-events: none;
     z-index: 0;
-    background: linear-gradient(45deg, #f0d4b8, #e8a87c, #d4926f);
-
 }
 
 .bingo-cell:hover::before {
@@ -219,6 +217,7 @@ body {
     color: #8b4513;
     text-align: center;
     font-style: italic;
+    font-family: 'Georgia', serif;
 }
 
 .modal-buttons {
