@@ -47,7 +47,7 @@ body {
 }
 
 .container {
-    max-width: 300px; /*ширина екрану*/
+    max-width: 350px; /*ширина екрану*/
     margin: 95px auto 0;
     position: relative;
     z-index: 2;
