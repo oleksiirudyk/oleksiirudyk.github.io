@@ -133,7 +133,7 @@
                 const cell = document.createElement('button');
                 cell.className = `bingo-cell ${task.completed ? 'completed' : ''} ${task.inAnalysis ? 'inAnalysis' : ''}`;
                 cell.textContent = task.title;
-                cell.datanum = task.id;
+                cell.setAttribute('data-num', task.id);
                 cell.onclick = () => openTaskModal(index);
                 grid.appendChild(cell);
             });

@@ -120,7 +120,7 @@ body {
 } */
 
 .bingo-cell::before {
-    content: attr(datanum); /* бере цифру з data-num */
+    content: attr(data-num); /* бере цифру з data-num */
     position: absolute;
     top: 50%;
     left: 50%;
