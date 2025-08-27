@@ -42,7 +42,7 @@ body {
     right: 0px;
     width: 350px;
     height: 350px;
-    background: url('./flower.png') no-repeat;
+    background: url('./flower-bot.png') no-repeat;
     background-size: contain;
     transform-origin: center;
     transform: rotate(180deg);
