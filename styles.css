@@ -28,19 +28,23 @@ body {
 
 .flower-top-left {
     top: -100px;
-    left: -110px;
-    width: 400px;
-    height: 400px;
+    /* left: -110px; */
+    left: -20px;
+    width: 350px;
+    height: 350px;
     background: url('./flower1.png') no-repeat;
     background-size: contain;
     transform-origin: center;
 }
 
 .flower-bottom-right {
-    bottom: -70px;
-    right: -90px;
-    width: 400px;
-    height: 400px;
+    /* bottom: -70px;
+    right: -90px; */
+    
+    bottom: 0px;
+    right: 0px;
+    width: 350px;
+    height: 350px;
     background: url('./flower1.png') no-repeat;
     background-size: contain;
     transform-origin: center;
